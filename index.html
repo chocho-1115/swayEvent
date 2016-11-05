@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=640,initial-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+<title>devicemotion</title>
+<style>
+*{margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+#shake{float:left;width:50%;padding:0 8px;}
+#direction{float:left;width:50%;padding:0 8px;}
+</style>
+</head>
+<body>
+    
+<!--主体部分-->
+<div id="shake"></div>
+<div id="direction"></div>
+<!--end 主体部分-->
+<audio id="shakeMc" src="mp3/shake.mp3"></audio>
+<audio id="winMc" src="mp3/win.mp3"></audio>
+
+</body>
+</html>
+<!--页面切换动画-->
+<script src="js/devicemotion.js"></script>
+<script>
+/////////////////////////////
+window.DeviceMotionEventEasy.direction.B = true;//开启重力感应
+window.DeviceMotionEventEasy.shake.B = true;//开启摇一摇事件
+//注册devicemotion事件
+if (window.DeviceMotionEvent&&window.DeviceMotionEventEasy) {  
+  　　  window.addEventListener('devicemotion',window.DeviceMotionEventEasy.deviceMotionHandler, false);  
+};
+
+
+var shakeMc = document.getElementById('shakeMc'),
+    winMc = document.getElementById('winMc'),
+	directionEle = document.getElementById('direction'),
+	shakeEle = document.getElementById('shake');
+
+/*摇一摇*/
+var shakeB = true;//防止重复调用摇一摇的回调函数
+window.DeviceMotionEventEasy.shake.callback = function(){
+	if(!shakeB)return false;
+	shakeEle.innerHTML = 'shake'
+	shakeMc.play();
+	setTimeout(function(){
+		winMc.play();
+		shakeEle.innerHTML = 'win'
+		shakeB=true;
+	},1500);
+}
+/*重力感应*/
+window.DeviceMotionEventEasy.direction.callback = function(x,y,z){
+	directionEle.innerHTML = x+'<br/>'+y+'<br/>'+z+'<br/>'
+}
+</script>
