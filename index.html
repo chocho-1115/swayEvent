@@ -6,13 +6,14 @@
 <title>devicemotion</title>
 <style>
 *{margin:0;padding:0;}
-html,body{width:100%;height:100%;overflow:hidden;}
+html,body{width:100%;height:100%;overflow:hidden;background:#222;color:#fff;}
 #shake{float:left;width:50%;padding:0 8px;}
 #direction{float:left;width:50%;padding:0 8px;}
+#canEle{display:block;position:absolute;}
 </style>
 </head>
 <body>
-    
+
 <!--主体部分-->
 <div id="shake"></div>
 <div id="direction"></div>
@@ -20,39 +21,91 @@ html,body{width:100%;height:100%;overflow:hidden;}
 <audio id="shakeMc" src="mp3/shake.mp3"></audio>
 <audio id="winMc" src="mp3/win.mp3"></audio>
 
+<canvas id="canEle"></canvas>
+
 </body>
 </html>
 <!--页面切换动画-->
+<script src="js/easeljs-0.8.1.min.js"></script>
+<!--<script src="js/tweenjs-0.6.2.min.js"></script>-->
 <script src="js/devicemotion.js"></script>
 <script>
 /////////////////////////////
-window.DeviceMotionEventEasy.direction.B = true;//开启重力感应
-window.DeviceMotionEventEasy.shake.B = true;//开启摇一摇事件
+window.DME.B = true;//开启摇一摇事件
 //注册devicemotion事件
-if (window.DeviceMotionEvent&&window.DeviceMotionEventEasy) {  
-  　　  window.addEventListener('devicemotion',window.DeviceMotionEventEasy.deviceMotionHandler, false);  
+if (window.DeviceMotionEvent&&window.DME) {  
+  　　  window.addEventListener('devicemotion',window.DME.handler, false);  
 };
 
 
 var shakeMc = document.getElementById('shakeMc'),
     winMc = document.getElementById('winMc'),
-	directionEle = document.getElementById('direction'),
 	shakeEle = document.getElementById('shake');
 
 /*摇一摇*/
 var shakeB = true;//防止重复调用摇一摇的回调函数
-window.DeviceMotionEventEasy.shake.callback = function(){
+window.DME.callback = function(){
 	if(!shakeB)return false;
-	shakeEle.innerHTML = 'shake'
+	shakeB = false;
+	shakeEle.innerHTML = 'shake';
 	shakeMc.play();
 	setTimeout(function(){
 		winMc.play();
-		shakeEle.innerHTML = 'win'
+		shakeEle.innerHTML = 'win';
 		shakeB=true;
 	},1500);
 }
-/*重力感应*/
-window.DeviceMotionEventEasy.direction.callback = function(x,y,z){
+
+
+
+
+/*--------------------------------*/
+var canEle = document.getElementById('canEle');
+var canW = window.innerWidth;
+var canH = window.innerHeight;
+var speed = {x:0,y:0};
+canEle.width = canW;
+canEle.height = canH;
+
+var stage = new createjs.Stage(canEle);
+var C = new createjs.Shape();//形状
+C.graphics.beginFill("#900").setStrokeStyle(1).beginStroke('red').drawCircle(0, 0, 9);//圆
+C.x = canW/2;
+C.y = canH/2;
+stage.addChild(C);
+
+createjs.Ticker.framerate = 60;
+createjs.Ticker.addEventListener("tick", handleTick);
+function handleTick(){
+	
+	C.x += speed.y;
+	C.y += speed.x;
+	if(C.x<10){
+		C.x = 10;
+	}else if(C.x>canW-10){
+		C.x = canW-10;
+	}
+	if(C.y<10){
+		C.y = 10;
+	}else if(C.y>canH-10){
+		C.y = canH-10;
+	}
+	
+	stage.update();
+}		
+
+if (window.DeviceOrientationEvent &&window.DOE) {  
+	window.addEventListener('deviceorientation',window.DOE.handler, false);  
+};
+
+window.DOE.B = true;//开启方向感应
+var directionEle = document.getElementById('direction');
+window.DOE.callback = function(x,y,z){
 	directionEle.innerHTML = x+'<br/>'+y+'<br/>'+z+'<br/>'
+	speed.x = x/5;
+	speed.y = y/5;
 }
+
+
+
 </script>
