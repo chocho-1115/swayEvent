@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=640,initial-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
-<title>devicemotion</title>
+<title>swayEvent</title>
 <style>
 *{margin:0;padding:0;}
 html,body{width:100%;height:100%;overflow:hidden;background:#222;color:#fff;}
@@ -27,14 +27,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#222;color:#fff;}
 </html>
 <!--页面切换动画-->
 <script src="js/easeljs-0.8.1.min.js"></script>
-<!--<script src="js/tweenjs-0.6.2.min.js"></script>-->
-<script src="js/devicemotion.js"></script>
+<script src="js/swayEvent.js?v=1"></script>
 <script>
 /////////////////////////////
-window.DME.B = true;//开启摇一摇事件
+
+swayEvent.DME.B = true;//开启摇一摇事件
 //注册devicemotion事件
-if (window.DeviceMotionEvent&&window.DME) {  
-  　　  window.addEventListener('devicemotion',window.DME.handler, false);  
+if (window.DeviceMotionEvent&&swayEvent.DME) {  
+  　　  window.addEventListener('devicemotion',swayEvent.DME.handler, false);  
 };
 
 
@@ -44,7 +44,7 @@ var shakeMc = document.getElementById('shakeMc'),
 
 /*摇一摇*/
 var shakeB = true;//防止重复调用摇一摇的回调函数
-window.DME.callback = function(){
+swayEvent.DME.callback = function(){
 	if(!shakeB)return false;
 	shakeB = false;
 	shakeEle.innerHTML = 'shake';
@@ -55,6 +55,7 @@ window.DME.callback = function(){
 		shakeB=true;
 	},1500);
 }
+
 
 
 
@@ -94,17 +95,29 @@ function handleTick(){
 	stage.update();
 }		
 
-if (window.DeviceOrientationEvent &&window.DOE) {  
-	window.addEventListener('deviceorientation',window.DOE.handler, false);  
+if (window.DeviceOrientationEvent &&swayEvent.DOE) {  
+	window.addEventListener('deviceorientation',swayEvent.DOE.handler, false);  
 };
 
-window.DOE.B = true;//开启方向感应
+swayEvent.DOE.B = true;//开启方向感应
 var directionEle = document.getElementById('direction');
-window.DOE.callback = function(x,y,z){
+swayEvent.DOE.callback = function(x,y,z){
 	directionEle.innerHTML = x+'<br/>'+y+'<br/>'+z+'<br/>'
 	speed.x = x/5;
 	speed.y = y/5;
 }
+
+/*--------------------------------*/
+
+
+
+
+
+
+
+
+
+
 
 
 
